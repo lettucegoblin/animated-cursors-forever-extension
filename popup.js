@@ -45,9 +45,6 @@ input.addEventListener('change', function(e) {
     }
 }, false);
 
-function renderCurFile(){
-
-}
 /*
 aniLoadFromStorage(function(aniCursor){
   previewCursorImg.src = aniCursor.BlobUrlArray[0]
@@ -59,7 +56,6 @@ renderCursorWithCurrentIndex()
 // --- CursorKey Helpers ----
 
 function deleteCurrentCursor(callback){
-  debugger;
   getCursorKeys(function(cursorKeys){
     var cur = cursorKeys.currentIndex
     var keyName = cursorKeys.keys[cur]
@@ -91,6 +87,7 @@ function saveCursor(base64Cursor, isAni = true){
     var prefix = isAni ? 'ani' : 'cur'
     var keyname = prefix + '_' + Math.floor(Math.random() * 9999999999);
     cursorKeys.keys.push(keyname)
+    localStorage["currentKeyName"] = keyname
     saveCursorBase64(keyname, base64Cursor, function(){
       cursorKeys.currentIndex = index
       saveCursorKeys(cursorKeys, function(){
@@ -133,7 +130,14 @@ function getCursorKeys(callback){
 }
 function renderCursorWithCurrentIndex(offset = 0){
   getCursorKeys(function(cursorKeys){
-    if(cursorKeys.keys.length == 0) return
+    if(cursorKeys.keys.length == 0) {
+      aniFileImport('hert.ani', function(aniCursor){
+        previewCursorImg.src = aniCursor.BlobUrlArray[0]
+        const animcur = makeanimcursor(aniCursor.BlobUrlArray, window.document.documentElement, aniCursor.cssDuration)
+        saveCursor(aniCursor.base64Cursor)
+      })
+      return
+    }
     if(cursorKeys.currentIndex + offset < 0){
       cursorKeys.currentIndex = cursorKeys.keys.length - 1
     } else if(cursorKeys.currentIndex + offset >= cursorKeys.keys.length){
@@ -166,7 +170,6 @@ nextCursorButton.onclick = function(){
 
 function getCursorFromStorage(keyName, callback){
   chrome.storage.local.get(keyName, function(data) {
-    console.log('getcursor', data)
     callback(data[keyName])
   });
 }

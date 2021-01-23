@@ -114,8 +114,7 @@ function toBits(fileObject, callback){
     reader.onload = function() {
         var arrayBuffer = this.result
         array = new Uint8Array(arrayBuffer)
-        
-        console.log(array)
+
         byteArr = array
         renderOutputBetter(callback)
     }
@@ -328,9 +327,7 @@ function renderOutputBetter(callback){
             var returnobj = rateArrToCssDurationAndModifyFrameCount(cursorOutput.rate.array, cursorBlobArray)
             duration = returnobj.duration
             cursorBlobArray = returnobj.frames
-            console.log('using cursorOutput.rate', cursorOutput.rate.array)
         }
-        console.log("duration, cursorBlobArray:", duration, cursorBlobArray)
         callback({
             BlobUrlArray: cursorBlobArray,
             cssDuration: duration,
