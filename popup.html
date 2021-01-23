@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    
+    <div id='cursorControlContainer'>
+      <div class='label'>Choose Cursor:</div>
+      <div id='cuteCursors'>
+        <div id='cursorSelector'>
+          <button id="prevCursor">prev</button>
+          <img id='previewCursor'></img>
+          <button id="nextCursor">next</button>
+        </div>
+        <button id="delCursor">delete</button>
+      </div>
+    </div>
+    <div id='addCursorContainer'>
+      <div class='label'>Add Cursor:</div>
+      <input type="file" accept="image" id="cursorinput">
+    </div>
+    
+    <div id='extensionEnable'>
+      <div class='label'>Extension on/off</div>
+      <label class="switch">
+          <input type="checkbox" id = 'extensionEnableCheckbox' checked>
+          <span class="slider round"></span>
+      </label>
+    </div>
+    <div id='note'>
+      refresh to see changes.<br>
+      (ctrl-f5 for stubborn pages)
+    </div>
+    <div id='suggestion'>You can find more cursors here: <a href='https://www.cursors-4u.com/'>cursors-4u</a></div>
+    <script src="aniImport.js"></script>
+    <script src="animcursors.js"></script>
+    <script src="popup.js"></script>
+    
+  </body>
+</html>

@@ -1,0 +1,128 @@
+/* Start of slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+/* End of slider */
+body {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0px;
+}
+button, input::-webkit-file-upload-button{
+  background: #bed0ec;
+  border-radius: 11px;
+  padding: 6px;
+  border-color: #8570a6;
+  border-width: 1px;
+  cursor: inherit;
+}
+
+#cursorControlContainer, #addCursorContainer{
+  display: flex;
+  justify-content: center;
+  border-bottom: solid #e5eaed 1px;
+  margin: 0px 8px 8px 8px;
+  padding: 0px 8px 8px 8px;
+  flex-direction: column;
+  align-items: center;
+}
+.label{
+  font-weight: bold;
+}
+#cuteCursors{
+  display: flex;
+  flex-direction: column;
+}
+#delCursor{
+  background: #f0d1d1;
+  margin-top: 1px;
+}
+#cursorInput{
+  border: #bf9c9c solid 1px;
+  border-radius: 4px;
+  padding: 4px 2px;
+}
+
+#previewCursor{
+  width: 32px;
+  height: 32px;
+  border: #bf9c9c solid 1px;
+  border-radius: 4px;
+
+}
+#extensionEnable {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+#note{
+  font-style: oblique;
+  margin: 2px 55px;
+  background: #e2dddf;
+  border-radius: 10px;
+  text-align: center;
+  color: #7e90ad;
+  padding: 4px;
+}
+#suggestion{
+  text-align: right;
+  color: #b0bac3;
+  margin-top: 18px;
+}
