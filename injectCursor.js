@@ -1,22 +1,15 @@
 
-console.log('injected')
-var port = chrome.runtime.connect({name:"mycontentscript"});
-port.onMessage.addListener(function(message,sender){
-    console.log(message);
-    if(message.curType == 'ani'){
-        aniLoadFromBlobo(message.curData,function(aniCursor){
-            animcur = makeanimcursor(aniCursor.BlobUrlArray, window.document.documentElement, aniCursor.cssDuration)
-        })
-    } else{
-        var cutebytes = new Uint8Array(atob(message.curData).split("").map(
-            (char)=>char.charCodeAt(0)
-            )
-        );
-        var blob = new Blob([cutebytes.buffer], { type: 'image/bmp' });
-        
-        var blobURL = URL.createObjectURL(blob);
+//console.log('Animated Cursor Added to Page!')
 
-        console.log(blobURL)
-        document.body.style.cursor = 'url('+blobURL+'), auto'
+var port = chrome.runtime.connect({name:"mycontentscript"});
+port.onMessage.addListener(function(message, sender){
+    //console.log(message);
+    if(message.curData.curType == 'ani'){
+        animcur = makeanimcursor(message.curData.blobArray, window.document.documentElement, message.curData.cssDuration)
+        /*aniLoadFromBlobo(message.curData,function(aniCursor){
+            animcur = makeanimcursor(aniCursor.BlobArray, window.document.documentElement, aniCursor.cssDuration)
+        })*/
+    } else{
+        document.body.style.cursor = 'url(data:image/bmp;base64,'+message.curData.blobArray[0]+'), auto'
     }
 });

@@ -226,11 +226,12 @@ function renderOutputBetter(callback){
                                         biClrImportant: concatBytes(byteArr, tempByteIndex+=bytes.DWORD, bytes.DWORD, bytes.AS_NUM)
                                     }
                                     var te = byteArr.slice(bitmapStartIndex, bitmapStartIndex + size)
-                                    
+                                    //debugger;
                                     var blob = new Blob([te.buffer], { type: 'image/bmp' });
                                     //canvas.renderImage(blob)
                                     
                                     newIcon.blobURL = URL.createObjectURL(blob);
+                                    newIcon.blob = btoa(String.fromCharCode.apply(null, te));
 
                                     cursorOutput[topLevelDirective][typeOfList]['frames'].push(newIcon)
                                     tempByteIndex = bitmapStartIndex + size
@@ -301,13 +302,15 @@ function renderOutputBetter(callback){
     var cursorBlobArray = []
     var frameCount = cursorOutput.LIST.fram.frames.length
     for(var i = 0; i < frameCount; i++){
-        cursorBlobArray.push(cursorOutput.LIST.fram.frames[i].blobURL)
+        cursorBlobArray.push(
+            cursorOutput.LIST.fram.frames[i].blob
+        )
     }
     if(frameCount == 1)
         cursorBlobArray.push(cursorBlobArray[0])
     if(cursorBlobArray.length > 0){
         let base64Cursor = btoa(String.fromCharCode.apply(null, byteArr));
-        localStorage.setItem('myCursor', base64Cursor)
+        //localStorage.setItem('myCursor', base64Cursor)
         //setSequence
 
         if(cursorOutput.seq){
@@ -329,9 +332,10 @@ function renderOutputBetter(callback){
             cursorBlobArray = returnobj.frames
         }
         callback({
-            BlobUrlArray: cursorBlobArray,
+            BlobArray: cursorBlobArray,
             cssDuration: duration,
-            base64Cursor: base64Cursor
+            base64Cursor: base64Cursor,
+            previewCursorUrl: cursorOutput.LIST.fram.frames[0].blobURL
         })
         
     }

@@ -5,7 +5,7 @@ var checkboxExtension = document.getElementById('extensionEnableCheckbox')
 
 var areWeEnabled = localStorage.getItem('extensionEnabled')
 if(areWeEnabled == null) {
-  areWeEnabled = true
+  areWeEnabled = 'true'
   localStorage.setItem('extensionEnabled', areWeEnabled) 
   // local storage incase you want to disable specifically on one device w/ shared google sync
 }
@@ -25,20 +25,27 @@ input.addEventListener('change', function(e) {
             var arrayBuffer = this.result
             cutebytes = new Uint8Array(arrayBuffer)
             var blob = new Blob([cutebytes.buffer], { type: 'image/bmp' });
-            
+            debugger;
             var blobURL = URL.createObjectURL(blob);
+            var blobString = btoa(String.fromCharCode.apply(null, cutebytes));
             previewCursorImg.src = blobURL
-            const animcur = makeanimcursor([blobURL,blobURL], window.document.documentElement, 300)
-            let base64Cursor = btoa(String.fromCharCode.apply(null, cutebytes));
-            saveCursor(base64Cursor, false)
+
+            var artificialAniCursor = {
+              BlobArray: [blobString,blobString],
+              cssDuration: 300
+            }
+            const animcur = makeanimcursor(artificialAniCursor.BlobArray, window.document.documentElement, artificialAniCursor.cssDuration)
+            //let base64Cursor = btoa(String.fromCharCode.apply(null, cutebytes));
+            
+            saveCursor(artificialAniCursor, false)
         }
         reader.readAsArrayBuffer(this.files[0]);
         
       }else{
         aniFileImport(this.files[0], function(aniCursor){
-          previewCursorImg.src = aniCursor.BlobUrlArray[0]
-          const animcur = makeanimcursor(aniCursor.BlobUrlArray, window.document.documentElement, aniCursor.cssDuration)
-          saveCursor(aniCursor.base64Cursor)
+          previewCursorImg.src = aniCursor.previewCursorUrl
+          const animcur = makeanimcursor(aniCursor.BlobArray, window.document.documentElement, aniCursor.cssDuration)
+          saveCursor(aniCursor)
         })
       }
       this.value = ''
@@ -81,14 +88,14 @@ function deleteCurrentCursor(callback){
 }
 
 
-function saveCursor(base64Cursor, isAni = true){
+function saveCursor(aniCursor, isAni = true){
   getCursorKeys(function(cursorKeys){
     var index = cursorKeys.keys.length
     var prefix = isAni ? 'ani' : 'cur'
     var keyname = prefix + '_' + Math.floor(Math.random() * 9999999999);
     cursorKeys.keys.push(keyname)
     localStorage["currentKeyName"] = keyname
-    saveCursorBase64(keyname, base64Cursor, function(){
+    cacheCursor(keyname, aniCursor, isAni, function(){
       cursorKeys.currentIndex = index
       saveCursorKeys(cursorKeys, function(){
         console.log('yeet')
@@ -97,6 +104,21 @@ function saveCursor(base64Cursor, isAni = true){
     
   })
 }
+
+function cacheCursor(keyname, aniCursor, isAni, callback){
+  var tempobj = {}
+  tempobj[keyname] = {
+    blobArray: aniCursor.BlobArray,
+    cssDuration: aniCursor.cssDuration,
+    curType: isAni ? 'ani' : 'cur'
+  }
+
+  chrome.storage.local.set(tempobj, function() {
+    console.log('saved cacheCursor')
+    callback()
+  });
+}
+
 function saveCursorBase64(keyname, base64Cursor, callback){
   var tempobj = {}
   tempobj[keyname] = base64Cursor
@@ -132,9 +154,9 @@ function renderCursorWithCurrentIndex(offset = 0){
   getCursorKeys(function(cursorKeys){
     if(cursorKeys.keys.length == 0) {
       aniFileImport('hert.ani', function(aniCursor){
-        previewCursorImg.src = aniCursor.BlobUrlArray[0]
-        const animcur = makeanimcursor(aniCursor.BlobUrlArray, window.document.documentElement, aniCursor.cssDuration)
-        saveCursor(aniCursor.base64Cursor)
+        previewCursorImg.src = aniCursor.previewCursorUrl
+        const animcur = makeanimcursor(aniCursor.BlobArray, window.document.documentElement, aniCursor.cssDuration)
+        saveCursor(aniCursor)
       })
       return
     }
@@ -181,22 +203,37 @@ function setCursor(keyName, callback){
     localStorage['currentKeyName'] = keyName
 //localStorage['myCursor']
     if(keyName.indexOf('cur') > -1){
-      var cutebytes = new Uint8Array(atob(curData).split("").map(
-          (char)=>char.charCodeAt(0)
-          )
-      );
-      var blob = new Blob([cutebytes.buffer], { type: 'image/bmp' });
-      
-      var blobURL = URL.createObjectURL(blob);
-      previewCursorImg.src = blobURL
-      const animcur = makeanimcursor([blobURL,blobURL], window.document.documentElement, 300)
+      var blob = b64toBlob(curData.blobArray[0], 'image/bmp');
+      var blobUrl = URL.createObjectURL(blob);
+      previewCursorImg.src = blobUrl
+      const animcur = makeanimcursor(curData.blobArray, window.document.documentElement, curData.cssDuration)
 
     } else{
-      aniLoadFromBlobo(curData, function(aniCursor){
-        previewCursorImg.src = aniCursor.BlobUrlArray[0]
-        animcur = makeanimcursor(aniCursor.BlobUrlArray, window.document.documentElement, aniCursor.cssDuration)
-      })
+      var blob = b64toBlob(curData.blobArray[0], 'image/bmp');
+      var blobUrl = URL.createObjectURL(blob);
+      previewCursorImg.src = blobUrl
+      animcur = makeanimcursor(curData.blobArray, window.document.documentElement, curData.cssDuration)
     }
   })
   callback()
+}
+//https://stackoverflow.com/a/16245768
+const b64toBlob = (b64Data, contentType='', sliceSize=512) => {
+  const byteCharacters = atob(b64Data);
+  const byteArrays = [];
+
+  for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+    const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+    const byteNumbers = new Array(slice.length);
+    for (let i = 0; i < slice.length; i++) {
+      byteNumbers[i] = slice.charCodeAt(i);
+    }
+
+    const byteArray = new Uint8Array(byteNumbers);
+    byteArrays.push(byteArray);
+  }
+
+  const blob = new Blob(byteArrays, {type: contentType});
+  return blob;
 }

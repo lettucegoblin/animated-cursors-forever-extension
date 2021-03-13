@@ -1,24 +1,25 @@
 {
     "name": "Animated Cursors Forever!",
-    "version": "1.0",
+    "version": "1.2",
     "description": "Chrome extension that brings animated cursors back to the web! Supports .ani and .cur files.",
-    "permissions": ["storage", "unlimitedStorage", "activeTab"],
+    "permissions": ["storage"],
     "background": {
-      "scripts": ["background.js"],
+      "scripts": ["aniImport.js", "background.js"],
       "persistent": false
     },
     "browser_action": {
       "default_popup": "popup.html"
     },
     "icons": { 
-      "16": "favicon-16x16.png",
-      "32": "favicon-32x32.png",
-      "256": "256x256.png"
+      "16": "icon16.png",
+      "32": "icon32.png",
+      "128": "icon128.png",
+      "256": "icon256.png"
      },
     "content_scripts": [
       {
         "matches": ["<all_urls>"],
-        "js": ["aniImport.js", "animcursors.js", "injectCursor.js" ]
+        "js": ["animcursors.js", "injectCursor.js" ]
       }
     ],
     "manifest_version": 2
