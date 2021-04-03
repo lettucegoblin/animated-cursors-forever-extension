@@ -1,3 +1,8 @@
+document.getElementById('cursorLink').addEventListener('click', function(){
+  chrome.tabs.create({url: this.href});
+  return false
+})
+
 var previewCursorImg = document.getElementById('previewCursor')
 
 // --- checkbox stuff ---

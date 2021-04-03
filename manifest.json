@@ -1,6 +1,6 @@
 {
     "name": "Animated Cursors Forever!",
-    "version": "1.2",
+    "version": "1.3",
     "description": "Chrome extension that brings animated cursors back to the web! Supports .ani and .cur files.",
     "permissions": ["storage"],
     "background": {
