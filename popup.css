@@ -1,3 +1,6 @@
+html{
+  min-width: 270px;
+}
 /* Start of slider */
 .switch {
   position: relative;
