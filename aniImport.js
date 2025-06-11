@@ -1,5 +1,6 @@
 (function () {
 var byteArr = []
+var root = (typeof window !== 'undefined') ? window : self
 
 const bytes = {
     BYTE: 1,
@@ -374,7 +375,7 @@ function concatBytes(byteArr, index, howManyBytes, isInt = true){
 // https://developer.mozilla.org/en-US/docs/Web/API/File
 // File Object 
 // usually from input.files[0]
-window.aniFileImport = function(urlOrFile, callback){
+root.aniFileImport = function(urlOrFile, callback){
     if(typeof urlOrFile == "string"){
         //is url
         getfile(urlOrFile, callback)
@@ -385,13 +386,13 @@ window.aniFileImport = function(urlOrFile, callback){
     }
 }
 
-window.aniLoadFromStorage = function(callback){
+root.aniLoadFromStorage = function(callback){
     if(localStorage.hasOwnProperty('myCursor')) {
         aniLoadFromBlobo(localStorage.getItem('myCursor'),callback)
     }
 }
 
-window.aniLoadFromBlobo = function(blobo, callback){
+root.aniLoadFromBlobo = function(blobo, callback){
     byteArr = new Uint8Array(atob(blobo).split("").map(
         (char)=>char.charCodeAt(0)
         )
