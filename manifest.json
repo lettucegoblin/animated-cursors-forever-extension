@@ -4,10 +4,9 @@
     "description": "Chrome extension that brings animated cursors back to the web! Supports .ani and .cur files.",
     "permissions": ["storage"],
     "background": {
-      "scripts": ["aniImport.js", "background.js"],
-      "persistent": false
+      "service_worker": "service-worker.js"
     },
-    "browser_action": {
+    "action": {
       "default_popup": "popup.html"
     },
     "icons": { 
@@ -22,5 +21,6 @@
         "js": ["animcursors.js", "injectCursor.js" ]
       }
     ],
-    "manifest_version": 2
+    "manifest_version": 3
   }
+
