@@ -8,15 +8,16 @@ var previewCursorImg = document.getElementById('previewCursor')
 // --- checkbox stuff ---
 var checkboxExtension = document.getElementById('extensionEnableCheckbox')
 
-var areWeEnabled = localStorage.getItem('extensionEnabled')
-if(areWeEnabled == null) {
-  areWeEnabled = 'true'
-  localStorage.setItem('extensionEnabled', areWeEnabled) 
-  // local storage incase you want to disable specifically on one device w/ shared google sync
-}
-checkboxExtension.checked = areWeEnabled == 'true'
+chrome.storage.local.get(["extensionEnabled"], function(res) {
+  var areWeEnabled = res.extensionEnabled;
+  if (areWeEnabled == null) {
+    areWeEnabled = "true";
+    chrome.storage.local.set({extensionEnabled: areWeEnabled});
+  }
+  checkboxExtension.checked = areWeEnabled === "true";
+});
 checkboxExtension.onclick = function(){
-  localStorage.setItem('extensionEnabled', checkboxExtension.checked)
+  chrome.storage.local.set({extensionEnabled: checkboxExtension.checked ? "true" : "false"});
 }
 // --- checkbox stuff ---
 // ---- animated cursor stuff ----
@@ -99,7 +100,7 @@ function saveCursor(aniCursor, isAni = true){
     var prefix = isAni ? 'ani' : 'cur'
     var keyname = prefix + '_' + Math.floor(Math.random() * 9999999999);
     cursorKeys.keys.push(keyname)
-    localStorage["currentKeyName"] = keyname
+      chrome.storage.local.set({currentKeyName: keyname});
     cacheCursor(keyname, aniCursor, isAni, function(){
       cursorKeys.currentIndex = index
       saveCursorKeys(cursorKeys, function(){
@@ -205,7 +206,7 @@ function setCursor(keyName, callback){
   console.log(keyName)
   
   getCursorFromStorage(keyName, function(curData){
-    localStorage['currentKeyName'] = keyName
+      chrome.storage.local.set({currentKeyName: keyName});
 //localStorage['myCursor']
     if(keyName.indexOf('cur') > -1){
       var blob = b64toBlob(curData.blobArray[0], 'image/bmp');
